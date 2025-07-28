@@ -1,13 +1,13 @@
 import { cn } from '@/lib/utils';
-import { useAppSelector } from '@/store/hooks';
 import React from 'react';
 type NotificationProps = {
   count: number;
   className?: string;
+  title?:string
 };
-const Notification = ({ count, className }: NotificationProps) => {
+const Notification = ({ count, className,title }: NotificationProps) => {
   return (
-    <div className={cn(' rounded text-sm text-center', className)}>{count}</div>
+    <p title={title} className={cn(' rounded text-sm text-center', className)}>{count.toString()}</p>
   );
 };
 

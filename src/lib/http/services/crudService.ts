@@ -7,45 +7,80 @@ interface RequestData<T = any> {
   id?: string;
 }
 
-export function getData<T = any[]>(url: string): Promise<T> {
-  return new Promise((resolve, reject) => {
-    apiRequest({ url })
-      .then((response) => resolve(response))
-      .catch((error) => reject('wrong'));
-  });
+interface ResponseT<T = any> {
+  response: T | null;
+  error: string | null;
+  
 }
 
-export function addData<T>({ url, data }: RequestData<T>): Promise<any> {
-  return new Promise((resolve, reject) => {
-    apiRequest({
-      url,
+export async function getData<T>(url: string): Promise<ResponseT<T>> {
+  try {
+    const response = await apiRequest({ url });
+    return { response, error: null };
+  } catch (err: any) {
+    return { response: null, error: err.message || String(err) };
+  }
+}
+
+
+
+
+
+export async function addData<T>({ url, data }: RequestData<T>):Promise<ResponseT<T>> {
+  try {
+    const response = await apiRequest({ url,
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      data,
-    })
-      .then((response) => resolve(response))
-      .catch((error) => reject(error));
-  });
+      data, });
+    return { response, error: null };
+  } catch (err: any) {
+    return { response: null, error: err.message || String(err) };
+  }
 }
+  // return new Promise((resolve, reject) => {
+  //   apiRequest({
+  //     url,
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     data,
+  //   })
+  //      .then((response: T) => (resolve({ response, error: null })))
+  //   .catch((err) => (reject({ response: null, error: err })));
+  // });
 
-export function updateData<T>({ url, data }: RequestData<T>): Promise<any> {
-  return new Promise((resolve, reject) => {
-    apiRequest({
-      url,
+
+export async function updateData<T>({ url, data }: RequestData<T>): Promise<ResponseT<T>> {
+  try {
+    const response = await apiRequest({ url,
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
-      data,
-    })
-      .then((response) => resolve(response))
-      .catch((error) => reject(error));
-  });
+      data, });
+    return { response, error: null };
+  } catch (err: any) {
+    return { response: null, error: err.message || String(err) };
+  }
 }
+  // return new Promise((resolve, reject) => {
+  //   apiRequest({
+  //     url,
+  //     method: 'PUT',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     data,
+  //   })
+  //     .then((response: T) => (resolve({ response, error: null })))
+  //   .catch((err) => (reject({ response: null, error: err })));
+  // });
 
-export function deleteData({ url, id }: RequestData): Promise<any> {
+
+export function deleteData<T>({ url, id }: RequestData): Promise<ResponseT<T>> {
   const deleteUrl = id ? `${url}/${id}` : url;
 
   return new Promise((resolve, reject) => {
@@ -56,7 +91,7 @@ export function deleteData({ url, id }: RequestData): Promise<any> {
         'Content-Type': 'application/json',
       },
     })
-      .then((response) => resolve(response))
-      .catch((error) => reject(error));
+       .then((response: T) => (resolve({ response, error: null })))
+    .catch((err) => (reject({ response: null, error: err })));
   });
 }

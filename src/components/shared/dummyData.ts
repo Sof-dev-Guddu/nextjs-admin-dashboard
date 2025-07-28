@@ -1,4 +1,4 @@
-import { Appeal } from '@/components/features/appeal/data-table/columns'
+import { Appeal } from '@/components/features/appeal/table-config/columns/columns'
 
 export const appleals: Appeal[] = [
   {

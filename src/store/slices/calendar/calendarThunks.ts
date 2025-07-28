@@ -9,6 +9,7 @@ import {
 import Endpoints from '@/lib/http/endpoints';
 import { CalendarEvent } from '@/types/types';
 import { getRandomColor } from '@/utils/colorUtils';
+import { error } from 'console';
 
 // Helper to generate random color
 // const getRandomColor = () => {
@@ -26,12 +27,12 @@ export const fetchEvents = createAsyncThunk<
   { rejectValue: string }
 >('calendar/fetchEvents', async (_, { rejectWithValue }) => {
   try {
-    const response = await getData<CalendarEvent[]>(Endpoints.CALENDAR.GET);
-    if (Array.isArray(response)) {
-      return response;
-    } else {
-      return rejectWithValue('Response is not an array');
+    const {response,error} = await getData<CalendarEvent[]>(Endpoints.CALENDAR.GET);
+    console.log(response)
+     if (error || !Array.isArray(response)) {
+      return rejectWithValue('Failed to fetch events or invalid data format');
     }
+    return response
   } catch (error: any) {
     return rejectWithValue(error.message || 'Failed to fetch events');
   }
@@ -40,24 +41,28 @@ export const fetchEvents = createAsyncThunk<
 // Add new event
 export const createEvent = createAsyncThunk<
   CalendarEvent,
-  Omit<CalendarEvent, 'id' | 'color'>,
+  Omit<CalendarEvent, 'id' >,
   { rejectValue: string }
 >('calendar/createEvent', async (event, { rejectWithValue }) => {
   try {
+    console.log("calender createEvent thunk try block first")
     const serializedEvent = {
-      ...event,
-      id: Date.now().toString(),
-      color: getRandomColor(),
-      start:
-        event.start instanceof Date ? event.start.toISOString() : event.start,
-      end: event.end instanceof Date ? event.end.toISOString() : event.end,
-    };
+  ...event,
+  id: Date.now().toString(),
+  start: event.start instanceof Date ? event.start.toISOString() : event.start,
+  end: event.end instanceof Date ? event.end.toISOString() : event.end,
+  backgroundColor: event.backgroundColor, // ✅ ensures FC sees it
+  borderColor: event.backgroundColor,
+};
+    console.log("calender createEvent thunk try block before add data")
     await addData({
       url: Endpoints.CALENDAR.POST,
       data: serializedEvent,
     });
+    console.log("calender createEvent thunk try block after add data")
     return serializedEvent;
   } catch (error: any) {
+     console.log("calender createEvent thunk catch block before add data",error)
     return rejectWithValue(error.message || 'Failed to create event');
   }
 });

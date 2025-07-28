@@ -1,27 +1,30 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Appeal } from '../../../components/features/appeal/data-dialog/columns';
-import { fetchAppeals, createAppeal, updateAppeal } from './apealThunk';
+import { Appeal } from"../../../components/features/appeal/table-config/columns/columns"
+import { fetchAppeals, createAppeal, updateAppeal,deleteAppeal, deleteMultipleAppeals } from './apealThunk';
+import { toast } from "sonner"
 
 interface AppealState {
   appeals: Appeal[];
   loading: boolean;
-  error: string | null;
+  errors: string | null;
   dialog: {
     isOpen: boolean;
-    mode: 'add' | 'edit';
+    mode: 'add' | 'edit'| "change_status";
     initialData: Appeal | null;
   };
+   selectedAppealsIDs: (string | undefined)[];
 }
 
 const initialState: AppealState = {
   appeals: [],
-  loading: false,
-  error: null,
+  loading: true,
+  errors: null,
   dialog: {
     isOpen: false,
     mode: 'edit',
     initialData: null,
   },
+  selectedAppealsIDs: [],
 };
 
 const appealSlice = createSlice({
@@ -30,49 +33,94 @@ const appealSlice = createSlice({
   reducers: {
     openDialog: (
       state,
-      action: PayloadAction<{ mode: 'add' | 'edit'; data?: Appeal }>
+      action: PayloadAction<{ mode: 'add' | 'edit' | "change_status" ; data?: Appeal }>
     ) => {
       state.dialog.isOpen = true;
       state.dialog.mode = action.payload.mode;
       state.dialog.initialData = action.payload.data || null;
     },
-    closeDialog: (state) => {
+    closeDialog: (state,action) => {
       state.dialog = {
         isOpen: false,
-        mode: 'add',
+        mode: action.payload ?? "add",
         initialData: null,
       };
     },
     setAppeals: (state, action: PayloadAction<Appeal[]>) => {
       state.appeals = action.payload;
+      state.loading=false
+    },
+    setSSRError: (state, action:PayloadAction<string|null>) => {
+      state.errors = action.payload;
+      state.loading=false
+    },
+     setSelectedAppeals: (state, action: PayloadAction<string[]>) => {
+      state.selectedAppealsIDs = action.payload
+      // console.log("from slice ",state.selectedAppealsIDs)
+    },
+    clearSelectedAppeals: (state) => {
+      state.selectedAppealsIDs = [];
     },
   },
   extraReducers: (builder) => {
     builder
       .addCase(fetchAppeals.pending, (state) => {
         state.loading = true;
-        state.error = null;
+        state.errors = null;
       })
       .addCase(
         fetchAppeals.fulfilled,
         (state, action: PayloadAction<Appeal[]>) => {
+          
           state.loading = false;
           state.appeals = action.payload; // Now correctly inferred as an array of Appeal
         }
       )
       .addCase(fetchAppeals.rejected, (state, action) => {
         state.loading = false;
-        state.error =
+        state.errors =
           (action.payload as string) ||
           action.error.message ||
           'Failed to fetch';
+      })
+      .addCase(createAppeal.pending, (state) => {
+        state.loading = true;
+        state.errors = null;
       })
       .addCase(
         createAppeal.fulfilled,
         (state, action: PayloadAction<Appeal>) => {
           state.appeals.unshift(action.payload);
+          state.loading = false;
+            state.dialog = {
+             isOpen: false,
+             mode:  "add",
+             initialData: null,
+            }
+          toast.success("Appeal has been created.")
         }
       )
+      .addCase(
+        createAppeal.rejected,
+        (state, action) => {
+           state.loading = false;
+           state.dialog = {
+             isOpen: false,
+             mode:  "add",
+             initialData: null,
+            }
+        // console.log(action.payload)
+        state.errors =
+          (action.payload as string) ||
+          action.error.message ||
+          'Failed to add';
+          toast.error(state.errors)
+        }
+      )
+      .addCase(updateAppeal.pending, (state) => {
+        state.loading = true;
+        state.errors = null;
+      })
       .addCase(
         updateAppeal.fulfilled,
         (state, action: PayloadAction<Appeal>) => {
@@ -80,12 +128,86 @@ const appealSlice = createSlice({
             (a) => a.id === action.payload.id
           );
           if (index !== -1) {
+            // console.log(action.payload)
             state.appeals[index] = action.payload;
           }
+           state.loading = false;
+            state.dialog = {
+             isOpen: false,
+             mode:  "add",
+             initialData: null,
+            }
+          // console.log(state.dialog.mode)
+          toast.success(`${state.dialog.mode==="change_status" ? "Status":"Appeal"} Updated Successfully ✔`)
         }
-      );
+      )
+      .addCase(updateAppeal.rejected, (state, action) => {
+        state.loading = false;
+        // console.log(action.payload)
+        state.dialog = {
+             isOpen: false,
+             mode:  "add",
+             initialData: null,
+            }
+        state.errors =
+          (action.payload as string) ||
+          action.error.message ||
+          'Failed to fetch';
+          toast.error(state.errors)
+      })
+      .addCase(
+        deleteAppeal.fulfilled,
+        (state, action: PayloadAction<Appeal>) => {
+          state.loading = false;
+          const index = state.appeals.findIndex(
+            (a) => a.id === action.payload.id
+          );
+        
+         state.appeals=state.appeals.filter((item)=>item.id!==action.payload.id);
+          
+         
+          toast.success(`Appeal Deleted Successfully ✔`)
+        }
+      )
+      .addCase(deleteAppeal.rejected, (state, action) => {
+        state.loading = false;
+        // console.log(action.payload)
+        state.errors =
+          (action.payload as string) ||
+          action.error.message ||
+          'Failed to fetch';
+          toast.error(state.errors)
+      })
+      .addCase(deleteMultipleAppeals.fulfilled, (state, action) => {
+       state.loading = false;
+
+          // Remove the deleted items from the store
+          state.appeals = state.appeals.filter(
+          (appeal) => typeof appeal.id === 'string' && !action.payload.includes(appeal.id)
+           );
+
+
+           // Clear selected items
+           state.selectedAppealsIDs = [];
+
+           toast.success(`${action.payload.length} appeals deleted successfully ✔`);
+       })
+     .addCase(deleteMultipleAppeals.rejected, (state, action) => {
+      state.loading = false;
+     state.errors = action.payload || 'Failed to delete appeals';
+     toast.error(state.errors);
+     });
+
   },
 });
 
-export const { openDialog, closeDialog, setAppeals } = appealSlice.actions;
+export const { 
+  openDialog, 
+  closeDialog, 
+  setAppeals,
+  setSSRError,
+  setSelectedAppeals,
+  clearSelectedAppeals
+              } = appealSlice.actions;
+
 export default appealSlice.reducer;

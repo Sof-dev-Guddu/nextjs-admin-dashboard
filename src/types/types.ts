@@ -18,6 +18,8 @@ export interface CalendarEvent {
   start: string | Date;
   end: string | Date;
   allDay: boolean;
+   backgroundColor?: string;
+  borderColor?: string;
   color?: string;
 }
 export interface CalendarUIState {

@@ -7,6 +7,7 @@ import {
   editEvent,
   deleteEvent,
 } from '../calendar/calendarThunks';
+import { toast } from 'sonner';
 
 const initialState: CalendarState = {
   events: [],
@@ -74,11 +75,13 @@ const calendarSlice = createSlice({
         fetchEvents.fulfilled,
         (state, action: PayloadAction<CalendarEvent[]>) => {
           state.status = 'succeeded';
+          console.log(action.payload)
           state.events = action.payload;
         }
       )
       .addCase(fetchEvents.rejected, (state, action) => {
         state.status = 'failed';
+        console.log(action.payload)
         state.error = action.payload ?? 'Failed to fetch events';
       })
 
@@ -92,11 +95,15 @@ const calendarSlice = createSlice({
         (state, action: PayloadAction<CalendarEvent>) => {
           state.status = 'succeeded';
           state.events.push(action.payload);
+          // console.log("fulfilled",action.payload)
+          toast.success("Event has been created.")
         }
       )
       .addCase(createEvent.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload ?? 'Failed to create event';
+        toast.error("Failed to create event.")
+        // console.log("rejected",action.payload)
       })
 
       // Edit Event
@@ -114,11 +121,13 @@ const calendarSlice = createSlice({
           if (index !== -1) {
             state.events[index] = action.payload;
           }
+          toast.success("Event has been updated.")
         }
       )
       .addCase(editEvent.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload ?? 'Failed to update event';
+        toast.error('Failed to update event')
       })
 
       // Delete Event
@@ -133,11 +142,15 @@ const calendarSlice = createSlice({
           state.events = state.events.filter(
             (event) => event.id !== action.payload
           );
+           toast.success('Event deleted succeessfully ')
         }
       )
       .addCase(deleteEvent.rejected, (state, action) => {
         state.status = 'failed';
+        console.log("from slice calander",action.payload)
         state.error = action.payload ?? 'Failed to delete event';
+
+        toast.error('Failed to delete event')
       });
   },
 });

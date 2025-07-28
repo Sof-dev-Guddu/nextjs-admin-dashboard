@@ -18,7 +18,7 @@ export const apiRequest = async (config: AxiosRequestConfig = {}) => {
     });
     return response.data;
   } catch (error) {
-    console.log('From instance ', error);
-    return formatAxiosError(error);
+   return Promise.reject(formatAxiosError(error))// ✅ Rethrow so outer catch works
   }
 };
+

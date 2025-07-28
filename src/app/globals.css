@@ -131,6 +131,18 @@
     @apply bg-background text-foreground;
   }
 }
+/* FullCalendar*/ 
+
+
+.fc-toolbar {
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 10;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  box-shadow: 0 2px 4px rgba(126, 125, 125, 0.05);
+}
 
 /* FullCalendar Button Customization */
 .fc .fc-button {
@@ -156,6 +168,15 @@
   @apply bg-gray-200 text-black hover:bg-gray-300 hover:border-none focus:bg-red-200;
 }
 
+.fc-toolbar-title,
+.fc-col-header-cell-cushion{
+  color: rgb(80, 79, 79);
+  font-weight: 500;
+  
+}
+/* .fc-toolbar-title{
+  border-bottom: 4px solid rgb(63,195,172);
+} */
 /* globals.css */
 .fc-event {
   opacity: 1 !important;
@@ -167,4 +188,11 @@
   font-weight: 500;
   border-radius: 4px !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
 }

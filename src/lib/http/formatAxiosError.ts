@@ -3,15 +3,15 @@ export function formatAxiosError(error: any) {
 
   switch (status) {
     case 400:
-      return 'Bad Request';
+      return 'Bad Request  with error code:400';
     case 401:
-      return 'Unauthorized access';
+      return 'Unauthorized access  with error code:401';
     case 403:
-      return 'Forbidden';
+      return 'Forbidden  with error code:403';
     case 404:
-      return 'Resource not found';
+      return 'Resource not found with error code:404';
     case 500:
-      return 'Server error';
+      return 'Server error  with error code:500';
     default:
       return 'Something went wrong';
   }
