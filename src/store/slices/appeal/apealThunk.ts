@@ -8,7 +8,6 @@ import {
 } from '../../../lib/http/services/crudService';
 import Endpoints from '../../../lib/http/endpoints';
 
-// Typing fetchAppeals to return an array of Appeals and the rejection value as a string
 export const fetchAppeals = createAsyncThunk<
   Appeal[],
   void,
@@ -26,7 +25,7 @@ export const fetchAppeals = createAsyncThunk<
   }
 });
 
-// Typing createAppeal to return an Appeal and rejection value as a string
+
 export const createAppeal = createAsyncThunk<
   Appeal,
   Appeal,
@@ -48,7 +47,7 @@ export const createAppeal = createAsyncThunk<
   
 });
 
-// Typing updateAppeal to return an Appeal and rejection value as a string
+
 export const updateAppeal = createAsyncThunk<
   Appeal,
   Appeal,
@@ -63,10 +62,10 @@ export const updateAppeal = createAsyncThunk<
     return rejectWithValue(error || 'Failed to update appeal');
   }
 
-  return response; // ✅ Now it's just Appeal, as required
+  return response; 
 });
 
-//delete appeal thunk
+
 export const deleteAppeal = createAsyncThunk<
   Appeal,
   Appeal,
@@ -84,17 +83,17 @@ export const deleteAppeal = createAsyncThunk<
   return response; 
 });
 
-// returns array of deleted IDs
+
 export const deleteMultipleAppeals = createAsyncThunk<
-  string[],           // returned value: deleted appeal IDs
-  string[],           // input: IDs to delete
+  string[],           
+  string[],           
   { rejectValue: string }
 >(
   'appeals/deleteMultiple',
   async (idsToDelete, { rejectWithValue }) => {
     try {
       const deletePromises = idsToDelete.map((id) =>
-        deleteData({ url: `${Endpoints.APPEAL.DELETE}/${id}` }) // DELETE /appeals/id
+        deleteData({ url: `${Endpoints.APPEAL.DELETE}/${id}` }) 
           .then(() => id)
       );
 

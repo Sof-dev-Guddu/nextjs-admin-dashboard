@@ -1,4 +1,3 @@
-// services/crudService.ts
 import { apiRequest } from '../httpClient';
 
 interface RequestData<T = any> {
@@ -39,19 +38,7 @@ export async function addData<T>({ url, data }: RequestData<T>):Promise<Response
     return { response: null, error: err.message || String(err) };
   }
 }
-  // return new Promise((resolve, reject) => {
-  //   apiRequest({
-  //     url,
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //     data,
-  //   })
-  //      .then((response: T) => (resolve({ response, error: null })))
-  //   .catch((err) => (reject({ response: null, error: err })));
-  // });
-
+  
 
 export async function updateData<T>({ url, data }: RequestData<T>): Promise<ResponseT<T>> {
   try {
@@ -66,18 +53,7 @@ export async function updateData<T>({ url, data }: RequestData<T>): Promise<Resp
     return { response: null, error: err.message || String(err) };
   }
 }
-  // return new Promise((resolve, reject) => {
-  //   apiRequest({
-  //     url,
-  //     method: 'PUT',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //     data,
-  //   })
-  //     .then((response: T) => (resolve({ response, error: null })))
-  //   .catch((err) => (reject({ response: null, error: err })));
-  // });
+  
 
 
 export function deleteData<T>({ url, id }: RequestData): Promise<ResponseT<T>> {

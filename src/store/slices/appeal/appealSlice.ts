@@ -56,7 +56,7 @@ const appealSlice = createSlice({
     },
      setSelectedAppeals: (state, action: PayloadAction<string[]>) => {
       state.selectedAppealsIDs = action.payload
-      // console.log("from slice ",state.selectedAppealsIDs)
+      
     },
     clearSelectedAppeals: (state) => {
       state.selectedAppealsIDs = [];
@@ -73,7 +73,7 @@ const appealSlice = createSlice({
         (state, action: PayloadAction<Appeal[]>) => {
           
           state.loading = false;
-          state.appeals = action.payload; // Now correctly inferred as an array of Appeal
+          state.appeals = action.payload; 
         }
       )
       .addCase(fetchAppeals.rejected, (state, action) => {
@@ -109,7 +109,7 @@ const appealSlice = createSlice({
              mode:  "add",
              initialData: null,
             }
-        // console.log(action.payload)
+       
         state.errors =
           (action.payload as string) ||
           action.error.message ||
@@ -128,7 +128,7 @@ const appealSlice = createSlice({
             (a) => a.id === action.payload.id
           );
           if (index !== -1) {
-            // console.log(action.payload)
+            
             state.appeals[index] = action.payload;
           }
            state.loading = false;
@@ -137,13 +137,13 @@ const appealSlice = createSlice({
              mode:  "add",
              initialData: null,
             }
-          // console.log(state.dialog.mode)
+         
           toast.success(`${state.dialog.mode==="change_status" ? "Status":"Appeal"} Updated Successfully ✔`)
         }
       )
       .addCase(updateAppeal.rejected, (state, action) => {
         state.loading = false;
-        // console.log(action.payload)
+        
         state.dialog = {
              isOpen: false,
              mode:  "add",
@@ -171,7 +171,7 @@ const appealSlice = createSlice({
       )
       .addCase(deleteAppeal.rejected, (state, action) => {
         state.loading = false;
-        // console.log(action.payload)
+      
         state.errors =
           (action.payload as string) ||
           action.error.message ||
@@ -179,9 +179,7 @@ const appealSlice = createSlice({
           toast.error(state.errors)
       })
       .addCase(deleteMultipleAppeals.fulfilled, (state, action) => {
-       state.loading = false;
-
-          // Remove the deleted items from the store
+          state.loading = false;
           state.appeals = state.appeals.filter(
           (appeal) => typeof appeal.id === 'string' && !action.payload.includes(appeal.id)
            );

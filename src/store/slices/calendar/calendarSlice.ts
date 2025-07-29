@@ -1,4 +1,3 @@
-// features/calendar/slice/calendarSlice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { CalendarEvent, CalendarState } from '@/types/types';
 import {
@@ -13,11 +12,6 @@ const initialState: CalendarState = {
   events: [],
   status: 'idle',
   error: null,
-  // ui: {
-  // isEventDialogOpen: false,
-  // isDeleteDialogOpen: false,
-  // selectedEvent: CalendarEvent | null,
-  // }
 };
 
 const calendarSlice = createSlice({
@@ -47,22 +41,6 @@ const calendarSlice = createSlice({
     setError: (state, action: PayloadAction<string>) => {
       state.error = action.payload;
     },
-    //     openAddEditDialog: (state, action: PayloadAction<CalendarEvent | null>) => {
-    //   state.ui.selectedEvent = action.payload;
-    //   state.ui.isEventDialogOpen = true;
-    // },
-    // closeAddEditDialog: (state) => {
-    //   state.ui.selectedEvent = null;
-    //   state.ui.isEventDialogOpen = false;
-    // },
-    // openDeleteDialog: (state, action: PayloadAction<CalendarEvent>) => {
-    //   state.ui.selectedEvent = action.payload;
-    //   state.ui.isDeleteDialogOpen = true;
-    // },
-    // closeDeleteDialog: (state) => {
-    //   state.ui.selectedEvent = null;
-    //   state.ui.isDeleteDialogOpen = false;
-    // }
   },
   extraReducers: (builder) => {
     builder
@@ -95,7 +73,7 @@ const calendarSlice = createSlice({
         (state, action: PayloadAction<CalendarEvent>) => {
           state.status = 'succeeded';
           state.events.push(action.payload);
-          // console.log("fulfilled",action.payload)
+         
           toast.success("Event has been created.")
         }
       )
@@ -103,7 +81,7 @@ const calendarSlice = createSlice({
         state.status = 'failed';
         state.error = action.payload ?? 'Failed to create event';
         toast.error("Failed to create event.")
-        // console.log("rejected",action.payload)
+       
       })
 
       // Edit Event
@@ -162,10 +140,6 @@ export const {
   removeEvent,
   setStatus,
   setError,
-  // openAddEditDialog,
-  // closeAddEditDialog,
-  // openDeleteDialog,
-  // closeDeleteDialog
 } = calendarSlice.actions;
 
 export default calendarSlice.reducer;

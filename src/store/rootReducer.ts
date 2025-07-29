@@ -1,4 +1,4 @@
-// lib/store/rootReducer.ts
+
 import { combineReducers } from '@reduxjs/toolkit';
 import appealReducer from './slices/appeal/appealSlice';
 import tableFilterReducer from './slices/appeal/appeal-filter/tableFilterSlice';

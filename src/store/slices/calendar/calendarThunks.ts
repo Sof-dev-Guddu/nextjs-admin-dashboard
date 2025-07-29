@@ -1,4 +1,3 @@
-// features/calendar/thunks/calendarThunks.ts
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import {
   addData,
@@ -8,19 +7,7 @@ import {
 } from '@/lib/http/services/crudService';
 import Endpoints from '@/lib/http/endpoints';
 import { CalendarEvent } from '@/types/types';
-import { getRandomColor } from '@/utils/colorUtils';
-import { error } from 'console';
 
-// Helper to generate random color
-// const getRandomColor = () => {
-//   const colors = [
-//     '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
-//     '#9966FF', '#FF9F40', '#8AC24A', '#607D8B'
-//   ];
-//   return colors[Math.floor(Math.random() * colors.length)];
-// };
-
-// Fetch all events
 export const fetchEvents = createAsyncThunk<
   CalendarEvent[],
   void,
@@ -74,11 +61,18 @@ export const editEvent = createAsyncThunk<
   { rejectValue: string }
 >('calendar/editEvent', async (event, { rejectWithValue }) => {
   try {
+    const serializedEvent = {
+      ...event,
+      start: event.start instanceof Date ? event.start.toISOString() : event.start,
+      end: event.end instanceof Date ? event.end.toISOString() : event.end,
+    };
+
     await updateData({
       url: Endpoints.CALENDAR.PUT,
-      data: event,
+      data: serializedEvent,
     });
-    return event;
+
+    return serializedEvent;
   } catch (error: any) {
     return rejectWithValue(error.message || 'Failed to update event');
   }
