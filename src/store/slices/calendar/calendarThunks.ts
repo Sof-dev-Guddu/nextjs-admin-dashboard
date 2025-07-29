@@ -38,7 +38,7 @@ export const createEvent = createAsyncThunk<
   id: Date.now().toString(),
   start: event.start instanceof Date ? event.start.toISOString() : event.start,
   end: event.end instanceof Date ? event.end.toISOString() : event.end,
-  backgroundColor: event.backgroundColor, // ✅ ensures FC sees it
+  backgroundColor: event.backgroundColor, 
   borderColor: event.backgroundColor,
 };
     console.log("calender createEvent thunk try block before add data")
